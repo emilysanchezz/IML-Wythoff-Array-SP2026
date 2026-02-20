@@ -1,5 +1,5 @@
 """
-Wythoff array inverse test
+Wythoff array distance table generation
 Code by Anthony Salemi
 """
 import math
@@ -68,7 +68,7 @@ for j in range(1, size + 1):
 
 
 def dist(x, y):
-    return abs((float(loc[x][0]) - float(loc[y][0])) + abs((float(loc[x][1]) - float(loc[y][1]))))
+    return abs(loc[x][0] - loc[y][0]) + abs(loc[x][1] - loc[y][1])
     
 for i in range(1, size + 1):
     line = ""
