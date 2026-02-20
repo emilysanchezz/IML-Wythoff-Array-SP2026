@@ -15,6 +15,10 @@ def criteria(x, y):
 n = 9999999
 m = 2
 
+"""
+CAN RUN A LOT FASTER IF ONE USES LESS PRIMITIVE PAIRS
+"""
+
 wythoff = [[Decimal('0') for _ in range(m)] for _ in range(n)]
 phi = (Decimal('1') + Decimal(str(math.sqrt(5)))) / Decimal('2')
 
@@ -83,3 +87,4 @@ for j in range(1, n): # verified to 508, socan start at for loop at 508 if you w
         print(str(number) + " check")
     n = 9999999
     
+
