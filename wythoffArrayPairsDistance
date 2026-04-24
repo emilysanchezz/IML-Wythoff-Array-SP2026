@@ -1,0 +1,132 @@
+import numpy as np
+import math
+import random
+
+def wythoff_pair(n): #n reps the row (row_pair) (first 2)
+    phi = (1 + math.sqrt(5))/2
+    a_n = math.floor(math.floor(n*phi)*phi)
+    b_n = math.floor(math.floor(n*phi)*phi**2)
+    return a_n, b_n
+
+def wyth_row(row, column=20):  # total_length = desired number of elements in the row, 10 can be default
+    lower_b, upper_b = wythoff_pair(row)
+    row = [lower_b, upper_b]
+    while len(row) < column:
+        row.append(row[-2] + row[-1])
+    return row
+
+def wyth_array(row, column): 
+    arr = []
+    for i in range(1, row+1):
+        r = wyth_row(i, column)
+        arr.append(r)
+    return arr
+
+def whole_wyth_array(row_upto = 10, col_upto = 10): #10x10 wyth array
+    arr = []
+    for i in range(1, row_upto+1):
+        r = wyth_row(i, col_upto)
+        arr.append(r)
+    return arr
+
+def wyth_col(col, row=10):
+    arr = []
+    for i in range(1, row+1):
+        c = wyth_row(i, col + 1)[col]
+        arr.append(c)
+    return arr
+
+def wythoff_location(arr):
+    location = {}
+    for i in range(len(arr)):
+        for j in range(len(arr[i])):
+            location[arr[i][j]] = (i+1, j+1)
+    return location
+
+def dist(a, b, loc):
+    r1, c1 = loc[a]
+    r2, c2 = loc[b]
+    return abs(r1 - r2) + abs(c1 - c2)
+
+def adjacent_pair_j_two(whole_arr, sub_arr, col):
+    pairs = []
+    location = wythoff_location(whole_arr)
+
+    for row in range(len(sub_arr)):
+        a = sub_arr[row][col]
+        b = sub_arr[row][col + 1]
+
+        original_a_pos = location[a]
+        original_b_pos = location[b]
+        original_dist = dist(a, b, location)
+
+        new_a = a + 1
+        new_b = b + 1
+
+
+        updated_a_pos = location[new_a]
+        updated_b_pos = location[new_b]
+        updated_dist = dist(new_a, new_b, location)
+
+        diff_dist = abs(updated_dist - original_dist)
+
+        pairs.append({"original_pair": (a, b),
+            "original_positions": (original_a_pos, original_b_pos),
+            "original_distance": original_dist,
+            "shifted_pair": (new_a, new_b),
+            "updated_positions": (updated_a_pos, updated_b_pos),
+            "updated_distance": updated_dist,
+            "distance_difference": diff_dist
+            })
+
+    return pairs
+
+def distances(observing, col):
+    obs_rows = wyth_array(observing, col+2)
+    obs_arr = whole_wyth_array(observing + 300,col + 30) #fixing for future to meet bounds all times
+    outputted_dist = []
+    results = adjacent_pair_j_two(obs_arr, obs_rows, col)
+    for result in results:
+        for key,val in result.items():
+            if key == "updated_distance":
+                outputted_dist.append(val)
+    return outputted_dist
+
+
+j_3_list = []
+for i in range(1,10):
+    j_3_list.append(math.floor(i * 1.618))
+# print(j_3_list)
+
+print(wyth_col(2))
+print(distances(10, 5)) #how many rows, and what j = (0 index, so j=1 is 0, etc)
+
+
+# @ j = 3 [1, 3, 4, 6, 8, 9, 11, 12, 14, 16, 17, 19, 21, 22, 24, 25, 27, 29, 30, 32]
+# @ j = 4 [1, 4, 6, 9, 12, 14, 17, 19, 22, 25, 27, 30, 33, 35, 38, 40, 43, 46, 48, 51]
+# @ j = 5 [2, 7, 10, 15, 20, 23, 28, 31, 36, 41, 44, 49, 54, 57, 62, 65, 70, 75, 78, 83]
+# @ j = 6 [3, 11, 16, 24, 32, 37, 45, 50, 58, 66]
+# @ j = 7 [5, 18, 26, 39, 52, 60, 73, 81, 94, 107]
+# @ j = 8 [8]
+# @ j = 9 [13]
+# @ j = 10 [21]
+
+# When studying the taxicab distance:
+# d(W(i,j)+1, W(i,j+1)+1)
+
+# For j ≥ 3, the distance equals an earlier column of the Wythoff array:
+# d(W(i,j)+1, W(i,j+1)+1) = W(i, j-3)
+
+# j = 3 → gives floor(i * phi)
+# j = 4 → gives column 1 of the Wythoff array
+# j = 5 → gives column 2
+# j = 6 → gives column 3
+# ...
+
+# So the shifted distance effectively moves 3 columns to the left.
+
+# Because each row follows a Fibonacci recurrence,
+# the distance sequences inherit this structure across columns.
+
+# Will update to hold larger values
+
